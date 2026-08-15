@@ -14,16 +14,541 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      alerts: {
+        Row: {
+          acknowledged_at: string | null
+          acknowledged_by: string | null
+          alert_type: string
+          created_at: string
+          description: string | null
+          id: string
+          resolved_at: string | null
+          resolved_by: string | null
+          resource_id: string | null
+          severity: string
+          status: string
+          title: string
+        }
+        Insert: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          alert_type?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          resource_id?: string | null
+          severity: string
+          status?: string
+          title: string
+        }
+        Update: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          alert_type?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          resource_id?: string | null
+          severity?: string
+          status?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alerts_resource_id_fkey"
+            columns: ["resource_id"]
+            isOneToOne: false
+            referencedRelation: "resources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      audit_logs: {
+        Row: {
+          action: string
+          created_at: string
+          details: string | null
+          id: string
+          resource_id: string | null
+          resource_type: string | null
+          status: string
+          user_email: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          details?: string | null
+          id?: string
+          resource_id?: string | null
+          resource_type?: string | null
+          status?: string
+          user_email?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          details?: string | null
+          id?: string
+          resource_id?: string | null
+          resource_type?: string | null
+          status?: string
+          user_email?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      cost_records: {
+        Row: {
+          daily_cost: number
+          hourly_cost: number
+          id: string
+          monthly_estimate: number
+          resource_id: string
+          timestamp: string
+        }
+        Insert: {
+          daily_cost: number
+          hourly_cost: number
+          id?: string
+          monthly_estimate: number
+          resource_id: string
+          timestamp?: string
+        }
+        Update: {
+          daily_cost?: number
+          hourly_cost?: number
+          id?: string
+          monthly_estimate?: number
+          resource_id?: string
+          timestamp?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cost_records_resource_id_fkey"
+            columns: ["resource_id"]
+            isOneToOne: false
+            referencedRelation: "resources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      environments: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          organization_id: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          organization_id: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          organization_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "environments_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      metrics: {
+        Row: {
+          connections: number
+          cpu: number
+          disk: number
+          error_rate: number
+          id: number
+          instance_count: number
+          latency: number
+          memory: number
+          network_in: number
+          network_out: number
+          requests: number
+          resource_id: string
+          timestamp: string
+        }
+        Insert: {
+          connections?: number
+          cpu: number
+          disk?: number
+          error_rate?: number
+          id?: number
+          instance_count?: number
+          latency?: number
+          memory: number
+          network_in?: number
+          network_out?: number
+          requests?: number
+          resource_id: string
+          timestamp?: string
+        }
+        Update: {
+          connections?: number
+          cpu?: number
+          disk?: number
+          error_rate?: number
+          id?: number
+          instance_count?: number
+          latency?: number
+          memory?: number
+          network_in?: number
+          network_out?: number
+          requests?: number
+          resource_id?: string
+          timestamp?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "metrics_resource_id_fkey"
+            columns: ["resource_id"]
+            isOneToOne: false
+            referencedRelation: "resources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          message: string | null
+          read: boolean
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message?: string | null
+          read?: boolean
+          title: string
+          type?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string | null
+          read?: boolean
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      organizations: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      predictions: {
+        Row: {
+          confidence: number
+          horizon_minutes: number
+          id: string
+          predicted_load: number
+          reasoning: string | null
+          recommended_instances: number
+          resource_id: string
+          risk_level: string
+          timestamp: string
+        }
+        Insert: {
+          confidence: number
+          horizon_minutes?: number
+          id?: string
+          predicted_load: number
+          reasoning?: string | null
+          recommended_instances: number
+          resource_id: string
+          risk_level: string
+          timestamp?: string
+        }
+        Update: {
+          confidence?: number
+          horizon_minutes?: number
+          id?: string
+          predicted_load?: number
+          reasoning?: string | null
+          recommended_instances?: number
+          resource_id?: string
+          risk_level?: string
+          timestamp?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "predictions_resource_id_fkey"
+            columns: ["resource_id"]
+            isOneToOne: false
+            referencedRelation: "resources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          name: string | null
+          organization_id: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          name?: string | null
+          organization_id?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          name?: string | null
+          organization_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      resources: {
+        Row: {
+          created_at: string
+          enabled: boolean
+          environment_id: string
+          hourly_rate: number
+          id: string
+          instance_count: number
+          max_instances: number
+          min_instances: number
+          name: string
+          provider: string
+          region: string
+          resource_type: string
+          status: string
+          target_cpu: number
+          target_memory: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          enabled?: boolean
+          environment_id: string
+          hourly_rate?: number
+          id?: string
+          instance_count?: number
+          max_instances?: number
+          min_instances?: number
+          name: string
+          provider?: string
+          region?: string
+          resource_type: string
+          status?: string
+          target_cpu?: number
+          target_memory?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          enabled?: boolean
+          environment_id?: string
+          hourly_rate?: number
+          id?: string
+          instance_count?: number
+          max_instances?: number
+          min_instances?: number
+          name?: string
+          provider?: string
+          region?: string
+          resource_type?: string
+          status?: string
+          target_cpu?: number
+          target_memory?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resources_environment_id_fkey"
+            columns: ["environment_id"]
+            isOneToOne: false
+            referencedRelation: "environments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      scaling_events: {
+        Row: {
+          action: string
+          id: string
+          new_instances: number
+          previous_instances: number
+          reason: string | null
+          resource_id: string
+          status: string
+          timestamp: string
+          trigger: string
+        }
+        Insert: {
+          action: string
+          id?: string
+          new_instances: number
+          previous_instances: number
+          reason?: string | null
+          resource_id: string
+          status?: string
+          timestamp?: string
+          trigger?: string
+        }
+        Update: {
+          action?: string
+          id?: string
+          new_instances?: number
+          previous_instances?: number
+          reason?: string | null
+          resource_id?: string
+          status?: string
+          timestamp?: string
+          trigger?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scaling_events_resource_id_fkey"
+            columns: ["resource_id"]
+            isOneToOne: false
+            referencedRelation: "resources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      scaling_policies: {
+        Row: {
+          enabled: boolean
+          id: string
+          max_instances: number
+          min_instances: number
+          resource_id: string
+          scale_down_cooldown: number
+          scale_up_cooldown: number
+          target_cpu: number
+          target_memory: number
+          updated_at: string
+        }
+        Insert: {
+          enabled?: boolean
+          id?: string
+          max_instances?: number
+          min_instances?: number
+          resource_id: string
+          scale_down_cooldown?: number
+          scale_up_cooldown?: number
+          target_cpu?: number
+          target_memory?: number
+          updated_at?: string
+        }
+        Update: {
+          enabled?: boolean
+          id?: string
+          max_instances?: number
+          min_instances?: number
+          resource_id?: string
+          scale_down_cooldown?: number
+          scale_up_cooldown?: number
+          target_cpu?: number
+          target_memory?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scaling_policies_resource_id_fkey"
+            columns: ["resource_id"]
+            isOneToOne: true
+            referencedRelation: "resources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      can_write: { Args: never; Returns: boolean }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "operator" | "viewer"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +675,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "operator", "viewer"],
+    },
   },
 } as const
