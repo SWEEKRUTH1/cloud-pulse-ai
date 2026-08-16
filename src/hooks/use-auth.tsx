@@ -22,7 +22,6 @@ interface AuthState {
   isAdmin: boolean;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
   signUp: (name: string, email: string, password: string) => Promise<{ error: string | null }>;
-  signInWithGoogle: () => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
   refresh: () => Promise<void>;
 }
@@ -96,17 +95,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           },
         });
         return { error: error?.message ?? null };
-      },
-      signInWithGoogle: async () => {
-        try {
-          const { lovable } = await import("@/integrations/lovable");
-          await lovable.auth.signInWithOAuth("google", {
-            redirect_uri: window.location.origin,
-          });
-          return { error: null };
-        } catch (e) {
-          return { error: e instanceof Error ? e.message : "Google sign-in failed" };
-        }
       },
       signOut: async () => {
         await supabase.auth.signOut();
