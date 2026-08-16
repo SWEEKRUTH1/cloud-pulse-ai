@@ -420,11 +420,12 @@ export function LiveProvider({ children }: { children: ReactNode }) {
           ),
         );
         await supabase.from("scaling_policies").update(patch).eq("resource_id", resourceId);
-        const resourcePatch: Record<string, number> = {};
-        if (patch.min_instances != null) resourcePatch['min_instances'] = patch.min_instances;
-        if (patch.max_instances != null) resourcePatch['max_instances'] = patch.max_instances;
-        if (patch.target_cpu != null) resourcePatch['target_cpu'] = patch.target_cpu;
-        if (patch.target_memory != null) resourcePatch['target_memory'] = patch.target_memory;
+        const resourcePatch = {
+          ...(patch.min_instances != null ? { min_instances: patch.min_instances } : {}),
+          ...(patch.max_instances != null ? { max_instances: patch.max_instances } : {}),
+          ...(patch.target_cpu != null ? { target_cpu: patch.target_cpu } : {}),
+          ...(patch.target_memory != null ? { target_memory: patch.target_memory } : {}),
+        };
         if (Object.keys(resourcePatch).length > 0)
           await supabase.from("resources").update(resourcePatch).eq("id", resourceId);
       },
