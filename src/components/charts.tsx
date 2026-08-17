@@ -31,7 +31,7 @@ function TipBox({
   active?: boolean;
   payload?: { name?: string; value?: number | string; color?: string }[];
   label?: string;
-  suffix?: string;
+  suffix?: string | undefined;
 }) {
   if (!active || !payload?.length) return null;
   return (
