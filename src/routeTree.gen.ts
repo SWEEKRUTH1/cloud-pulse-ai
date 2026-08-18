@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedAlertsRouteImport } from './routes/_authenticated/alerts'
 import { Route as AuthenticatedCostRouteImport } from './routes/_authenticated/cost'
+import { Route as AuthenticatedHistoryRouteImport } from './routes/_authenticated/history'
 import { Route as AuthenticatedInfrastructureRouteImport } from './routes/_authenticated/infrastructure'
 import { Route as AuthenticatedInsightsRouteImport } from './routes/_authenticated/insights'
 import { Route as AuthenticatedMetricsRouteImport } from './routes/_authenticated/metrics'
@@ -43,6 +44,11 @@ const AuthenticatedAlertsRoute = AuthenticatedAlertsRouteImport.update({
 const AuthenticatedCostRoute = AuthenticatedCostRouteImport.update({
   id: '/cost',
   path: '/cost',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedHistoryRoute = AuthenticatedHistoryRouteImport.update({
+  id: '/history',
+  path: '/history',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedInfrastructureRoute =
@@ -82,6 +88,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/alerts': typeof AuthenticatedAlertsRoute
   '/cost': typeof AuthenticatedCostRoute
+  '/history': typeof AuthenticatedHistoryRoute
   '/infrastructure': typeof AuthenticatedInfrastructureRoute
   '/insights': typeof AuthenticatedInsightsRoute
   '/metrics': typeof AuthenticatedMetricsRoute
@@ -94,6 +101,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/alerts': typeof AuthenticatedAlertsRoute
   '/cost': typeof AuthenticatedCostRoute
+  '/history': typeof AuthenticatedHistoryRoute
   '/infrastructure': typeof AuthenticatedInfrastructureRoute
   '/insights': typeof AuthenticatedInsightsRoute
   '/metrics': typeof AuthenticatedMetricsRoute
@@ -108,6 +116,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/_authenticated/alerts': typeof AuthenticatedAlertsRoute
   '/_authenticated/cost': typeof AuthenticatedCostRoute
+  '/_authenticated/history': typeof AuthenticatedHistoryRoute
   '/_authenticated/infrastructure': typeof AuthenticatedInfrastructureRoute
   '/_authenticated/insights': typeof AuthenticatedInsightsRoute
   '/_authenticated/metrics': typeof AuthenticatedMetricsRoute
@@ -122,6 +131,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/alerts'
     | '/cost'
+    | '/history'
     | '/infrastructure'
     | '/insights'
     | '/metrics'
@@ -134,6 +144,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/alerts'
     | '/cost'
+    | '/history'
     | '/infrastructure'
     | '/insights'
     | '/metrics'
@@ -147,6 +158,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/_authenticated/alerts'
     | '/_authenticated/cost'
+    | '/_authenticated/history'
     | '/_authenticated/infrastructure'
     | '/_authenticated/insights'
     | '/_authenticated/metrics'
@@ -198,6 +210,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCostRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/history': {
+      id: '/_authenticated/history'
+      path: '/history'
+      fullPath: '/history'
+      preLoaderRoute: typeof AuthenticatedHistoryRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/infrastructure': {
       id: '/_authenticated/infrastructure'
       path: '/infrastructure'
@@ -246,6 +265,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAlertsRoute: typeof AuthenticatedAlertsRoute
   AuthenticatedCostRoute: typeof AuthenticatedCostRoute
+  AuthenticatedHistoryRoute: typeof AuthenticatedHistoryRoute
   AuthenticatedInfrastructureRoute: typeof AuthenticatedInfrastructureRoute
   AuthenticatedInsightsRoute: typeof AuthenticatedInsightsRoute
   AuthenticatedMetricsRoute: typeof AuthenticatedMetricsRoute
@@ -257,6 +277,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAlertsRoute: AuthenticatedAlertsRoute,
   AuthenticatedCostRoute: AuthenticatedCostRoute,
+  AuthenticatedHistoryRoute: AuthenticatedHistoryRoute,
   AuthenticatedInfrastructureRoute: AuthenticatedInfrastructureRoute,
   AuthenticatedInsightsRoute: AuthenticatedInsightsRoute,
   AuthenticatedMetricsRoute: AuthenticatedMetricsRoute,
