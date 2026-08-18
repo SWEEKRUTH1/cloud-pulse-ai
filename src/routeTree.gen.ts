@@ -12,8 +12,16 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedAlertsRouteImport } from './routes/_authenticated/alerts'
+import { Route as AuthenticatedCostRouteImport } from './routes/_authenticated/cost'
+import { Route as AuthenticatedHistoryRouteImport } from './routes/_authenticated/history'
+import { Route as AuthenticatedInfrastructureRouteImport } from './routes/_authenticated/infrastructure'
+import { Route as AuthenticatedInsightsRouteImport } from './routes/_authenticated/insights'
 import { Route as AuthenticatedMetricsRouteImport } from './routes/_authenticated/metrics'
 import { Route as AuthenticatedOverviewRouteImport } from './routes/_authenticated/overview'
+import { Route as AuthenticatedScalingRouteImport } from './routes/_authenticated/scaling'
+import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as AuthenticatedSimulationRouteImport } from './routes/_authenticated/simulation'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -29,6 +37,32 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAlertsRoute = AuthenticatedAlertsRouteImport.update({
+  id: '/alerts',
+  path: '/alerts',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedCostRoute = AuthenticatedCostRouteImport.update({
+  id: '/cost',
+  path: '/cost',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedHistoryRoute = AuthenticatedHistoryRouteImport.update({
+  id: '/history',
+  path: '/history',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedInfrastructureRoute =
+  AuthenticatedInfrastructureRouteImport.update({
+    id: '/infrastructure',
+    path: '/infrastructure',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedInsightsRoute = AuthenticatedInsightsRouteImport.update({
+  id: '/insights',
+  path: '/insights',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedMetricsRoute = AuthenticatedMetricsRouteImport.update({
   id: '/metrics',
   path: '/metrics',
@@ -39,39 +73,110 @@ const AuthenticatedOverviewRoute = AuthenticatedOverviewRouteImport.update({
   path: '/overview',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedScalingRoute = AuthenticatedScalingRouteImport.update({
+  id: '/scaling',
+  path: '/scaling',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedSimulationRoute = AuthenticatedSimulationRouteImport.update({
+  id: '/simulation',
+  path: '/simulation',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/alerts': typeof AuthenticatedAlertsRoute
+  '/cost': typeof AuthenticatedCostRoute
+  '/history': typeof AuthenticatedHistoryRoute
+  '/infrastructure': typeof AuthenticatedInfrastructureRoute
+  '/insights': typeof AuthenticatedInsightsRoute
   '/metrics': typeof AuthenticatedMetricsRoute
   '/overview': typeof AuthenticatedOverviewRoute
+  '/scaling': typeof AuthenticatedScalingRoute
+  '/settings': typeof AuthenticatedSettingsRoute
+  '/simulation': typeof AuthenticatedSimulationRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/alerts': typeof AuthenticatedAlertsRoute
+  '/cost': typeof AuthenticatedCostRoute
+  '/history': typeof AuthenticatedHistoryRoute
+  '/infrastructure': typeof AuthenticatedInfrastructureRoute
+  '/insights': typeof AuthenticatedInsightsRoute
   '/metrics': typeof AuthenticatedMetricsRoute
   '/overview': typeof AuthenticatedOverviewRoute
+  '/scaling': typeof AuthenticatedScalingRoute
+  '/settings': typeof AuthenticatedSettingsRoute
+  '/simulation': typeof AuthenticatedSimulationRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/alerts': typeof AuthenticatedAlertsRoute
+  '/_authenticated/cost': typeof AuthenticatedCostRoute
+  '/_authenticated/history': typeof AuthenticatedHistoryRoute
+  '/_authenticated/infrastructure': typeof AuthenticatedInfrastructureRoute
+  '/_authenticated/insights': typeof AuthenticatedInsightsRoute
   '/_authenticated/metrics': typeof AuthenticatedMetricsRoute
   '/_authenticated/overview': typeof AuthenticatedOverviewRoute
+  '/_authenticated/scaling': typeof AuthenticatedScalingRoute
+  '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/_authenticated/simulation': typeof AuthenticatedSimulationRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/metrics' | '/overview'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/alerts'
+    | '/cost'
+    | '/history'
+    | '/infrastructure'
+    | '/insights'
+    | '/metrics'
+    | '/overview'
+    | '/scaling'
+    | '/settings'
+    | '/simulation'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/metrics' | '/overview'
+  to:
+    | '/'
+    | '/auth'
+    | '/alerts'
+    | '/cost'
+    | '/history'
+    | '/infrastructure'
+    | '/insights'
+    | '/metrics'
+    | '/overview'
+    | '/scaling'
+    | '/settings'
+    | '/simulation'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/alerts'
+    | '/_authenticated/cost'
+    | '/_authenticated/history'
+    | '/_authenticated/infrastructure'
+    | '/_authenticated/insights'
     | '/_authenticated/metrics'
     | '/_authenticated/overview'
+    | '/_authenticated/scaling'
+    | '/_authenticated/settings'
+    | '/_authenticated/simulation'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -103,6 +208,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/alerts': {
+      id: '/_authenticated/alerts'
+      path: '/alerts'
+      fullPath: '/alerts'
+      preLoaderRoute: typeof AuthenticatedAlertsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/cost': {
+      id: '/_authenticated/cost'
+      path: '/cost'
+      fullPath: '/cost'
+      preLoaderRoute: typeof AuthenticatedCostRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/history': {
+      id: '/_authenticated/history'
+      path: '/history'
+      fullPath: '/history'
+      preLoaderRoute: typeof AuthenticatedHistoryRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/infrastructure': {
+      id: '/_authenticated/infrastructure'
+      path: '/infrastructure'
+      fullPath: '/infrastructure'
+      preLoaderRoute: typeof AuthenticatedInfrastructureRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/insights': {
+      id: '/_authenticated/insights'
+      path: '/insights'
+      fullPath: '/insights'
+      preLoaderRoute: typeof AuthenticatedInsightsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/metrics': {
       id: '/_authenticated/metrics'
       path: '/metrics'
@@ -117,17 +257,54 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOverviewRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/scaling': {
+      id: '/_authenticated/scaling'
+      path: '/scaling'
+      fullPath: '/scaling'
+      preLoaderRoute: typeof AuthenticatedScalingRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/settings': {
+      id: '/_authenticated/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/simulation': {
+      id: '/_authenticated/simulation'
+      path: '/simulation'
+      fullPath: '/simulation'
+      preLoaderRoute: typeof AuthenticatedSimulationRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAlertsRoute: typeof AuthenticatedAlertsRoute
+  AuthenticatedCostRoute: typeof AuthenticatedCostRoute
+  AuthenticatedHistoryRoute: typeof AuthenticatedHistoryRoute
+  AuthenticatedInfrastructureRoute: typeof AuthenticatedInfrastructureRoute
+  AuthenticatedInsightsRoute: typeof AuthenticatedInsightsRoute
   AuthenticatedMetricsRoute: typeof AuthenticatedMetricsRoute
   AuthenticatedOverviewRoute: typeof AuthenticatedOverviewRoute
+  AuthenticatedScalingRoute: typeof AuthenticatedScalingRoute
+  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+  AuthenticatedSimulationRoute: typeof AuthenticatedSimulationRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAlertsRoute: AuthenticatedAlertsRoute,
+  AuthenticatedCostRoute: AuthenticatedCostRoute,
+  AuthenticatedHistoryRoute: AuthenticatedHistoryRoute,
+  AuthenticatedInfrastructureRoute: AuthenticatedInfrastructureRoute,
+  AuthenticatedInsightsRoute: AuthenticatedInsightsRoute,
   AuthenticatedMetricsRoute: AuthenticatedMetricsRoute,
   AuthenticatedOverviewRoute: AuthenticatedOverviewRoute,
+  AuthenticatedScalingRoute: AuthenticatedScalingRoute,
+  AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+  AuthenticatedSimulationRoute: AuthenticatedSimulationRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
