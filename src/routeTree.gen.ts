@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedInfrastructureRouteImport } from './routes/_authenticated/infrastructure'
+import { Route as AuthenticatedInsightsRouteImport } from './routes/_authenticated/insights'
 import { Route as AuthenticatedMetricsRouteImport } from './routes/_authenticated/metrics'
 import { Route as AuthenticatedOverviewRouteImport } from './routes/_authenticated/overview'
 
@@ -36,6 +37,11 @@ const AuthenticatedInfrastructureRoute =
     path: '/infrastructure',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedInsightsRoute = AuthenticatedInsightsRouteImport.update({
+  id: '/insights',
+  path: '/insights',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedMetricsRoute = AuthenticatedMetricsRouteImport.update({
   id: '/metrics',
   path: '/metrics',
@@ -51,6 +57,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/infrastructure': typeof AuthenticatedInfrastructureRoute
+  '/insights': typeof AuthenticatedInsightsRoute
   '/metrics': typeof AuthenticatedMetricsRoute
   '/overview': typeof AuthenticatedOverviewRoute
 }
@@ -58,6 +65,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/infrastructure': typeof AuthenticatedInfrastructureRoute
+  '/insights': typeof AuthenticatedInsightsRoute
   '/metrics': typeof AuthenticatedMetricsRoute
   '/overview': typeof AuthenticatedOverviewRoute
 }
@@ -67,20 +75,23 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/_authenticated/infrastructure': typeof AuthenticatedInfrastructureRoute
+  '/_authenticated/insights': typeof AuthenticatedInsightsRoute
   '/_authenticated/metrics': typeof AuthenticatedMetricsRoute
   '/_authenticated/overview': typeof AuthenticatedOverviewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/infrastructure' | '/metrics' | '/overview'
+  fullPaths:
+    '/' | '/auth' | '/infrastructure' | '/insights' | '/metrics' | '/overview'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/infrastructure' | '/metrics' | '/overview'
+  to: '/' | '/auth' | '/infrastructure' | '/insights' | '/metrics' | '/overview'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
     | '/_authenticated/infrastructure'
+    | '/_authenticated/insights'
     | '/_authenticated/metrics'
     | '/_authenticated/overview'
   fileRoutesById: FileRoutesById
@@ -121,6 +132,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedInfrastructureRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/insights': {
+      id: '/_authenticated/insights'
+      path: '/insights'
+      fullPath: '/insights'
+      preLoaderRoute: typeof AuthenticatedInsightsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/metrics': {
       id: '/_authenticated/metrics'
       path: '/metrics'
@@ -140,12 +158,14 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedInfrastructureRoute: typeof AuthenticatedInfrastructureRoute
+  AuthenticatedInsightsRoute: typeof AuthenticatedInsightsRoute
   AuthenticatedMetricsRoute: typeof AuthenticatedMetricsRoute
   AuthenticatedOverviewRoute: typeof AuthenticatedOverviewRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedInfrastructureRoute: AuthenticatedInfrastructureRoute,
+  AuthenticatedInsightsRoute: AuthenticatedInsightsRoute,
   AuthenticatedMetricsRoute: AuthenticatedMetricsRoute,
   AuthenticatedOverviewRoute: AuthenticatedOverviewRoute,
 }
