@@ -17,6 +17,7 @@ import { Route as AuthenticatedInsightsRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedMetricsRouteImport } from './routes/_authenticated/metrics'
 import { Route as AuthenticatedOverviewRouteImport } from './routes/_authenticated/overview'
 import { Route as AuthenticatedScalingRouteImport } from './routes/_authenticated/scaling'
+import { Route as AuthenticatedSimulationRouteImport } from './routes/_authenticated/simulation'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -58,6 +59,11 @@ const AuthenticatedScalingRoute = AuthenticatedScalingRouteImport.update({
   path: '/scaling',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedSimulationRoute = AuthenticatedSimulationRouteImport.update({
+  id: '/simulation',
+  path: '/simulation',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -67,6 +73,7 @@ export interface FileRoutesByFullPath {
   '/metrics': typeof AuthenticatedMetricsRoute
   '/overview': typeof AuthenticatedOverviewRoute
   '/scaling': typeof AuthenticatedScalingRoute
+  '/simulation': typeof AuthenticatedSimulationRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -76,6 +83,7 @@ export interface FileRoutesByTo {
   '/metrics': typeof AuthenticatedMetricsRoute
   '/overview': typeof AuthenticatedOverviewRoute
   '/scaling': typeof AuthenticatedScalingRoute
+  '/simulation': typeof AuthenticatedSimulationRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -87,6 +95,7 @@ export interface FileRoutesById {
   '/_authenticated/metrics': typeof AuthenticatedMetricsRoute
   '/_authenticated/overview': typeof AuthenticatedOverviewRoute
   '/_authenticated/scaling': typeof AuthenticatedScalingRoute
+  '/_authenticated/simulation': typeof AuthenticatedSimulationRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -98,6 +107,7 @@ export interface FileRouteTypes {
     | '/metrics'
     | '/overview'
     | '/scaling'
+    | '/simulation'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -107,6 +117,7 @@ export interface FileRouteTypes {
     | '/metrics'
     | '/overview'
     | '/scaling'
+    | '/simulation'
   id:
     | '__root__'
     | '/'
@@ -117,6 +128,7 @@ export interface FileRouteTypes {
     | '/_authenticated/metrics'
     | '/_authenticated/overview'
     | '/_authenticated/scaling'
+    | '/_authenticated/simulation'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -183,6 +195,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedScalingRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/simulation': {
+      id: '/_authenticated/simulation'
+      path: '/simulation'
+      fullPath: '/simulation'
+      preLoaderRoute: typeof AuthenticatedSimulationRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -192,6 +211,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedMetricsRoute: typeof AuthenticatedMetricsRoute
   AuthenticatedOverviewRoute: typeof AuthenticatedOverviewRoute
   AuthenticatedScalingRoute: typeof AuthenticatedScalingRoute
+  AuthenticatedSimulationRoute: typeof AuthenticatedSimulationRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -200,6 +220,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedMetricsRoute: AuthenticatedMetricsRoute,
   AuthenticatedOverviewRoute: AuthenticatedOverviewRoute,
   AuthenticatedScalingRoute: AuthenticatedScalingRoute,
+  AuthenticatedSimulationRoute: AuthenticatedSimulationRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
