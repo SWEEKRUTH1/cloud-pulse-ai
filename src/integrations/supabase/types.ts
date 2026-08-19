@@ -103,6 +103,100 @@ export type Database = {
         }
         Relationships: []
       }
+      cloud_connections: {
+        Row: {
+          account_ref: string | null
+          auth_method: string
+          created_at: string
+          created_by: string | null
+          credential_ref: string | null
+          display_name: string
+          id: string
+          last_checked_at: string | null
+          last_error: string | null
+          organization_id: string
+          provider: string
+          region: string
+          scopes: string[]
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          account_ref?: string | null
+          auth_method?: string
+          created_at?: string
+          created_by?: string | null
+          credential_ref?: string | null
+          display_name: string
+          id?: string
+          last_checked_at?: string | null
+          last_error?: string | null
+          organization_id: string
+          provider: string
+          region: string
+          scopes?: string[]
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          account_ref?: string | null
+          auth_method?: string
+          created_at?: string
+          created_by?: string | null
+          credential_ref?: string | null
+          display_name?: string
+          id?: string
+          last_checked_at?: string | null
+          last_error?: string | null
+          organization_id?: string
+          provider?: string
+          region?: string
+          scopes?: string[]
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cloud_connections_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cloud_settings: {
+        Row: {
+          id: string
+          mode: string
+          organization_id: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          id?: string
+          mode?: string
+          organization_id: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          id?: string
+          mode?: string
+          organization_id?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cloud_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cost_records: {
         Row: {
           daily_cost: number
