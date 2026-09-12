@@ -2,6 +2,7 @@ import { Link, useRouter, useRouterState } from "@tanstack/react-router";
 import {
   Activity,
   AlertTriangle,
+  Bot,
   BrainCircuit,
   ChevronsUpDown,
   Coins,
@@ -33,6 +34,7 @@ import { useLive } from "@/lib/live-store";
 import { cn } from "@/lib/utils";
 
 const nav = [
+  { to: "/ai-agent", label: "AI Agent", icon: Bot },
   { to: "/overview", label: "Overview", icon: LayoutDashboard },
   { to: "/infrastructure", label: "Infrastructure", icon: Server },
   { to: "/metrics", label: "Live Metrics", icon: Activity },

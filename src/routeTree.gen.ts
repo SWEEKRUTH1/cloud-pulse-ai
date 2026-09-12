@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedAiAgentRouteImport } from './routes/_authenticated/ai-agent'
 import { Route as AuthenticatedAlertsRouteImport } from './routes/_authenticated/alerts'
 import { Route as AuthenticatedCostRouteImport } from './routes/_authenticated/cost'
 import { Route as AuthenticatedHistoryRouteImport } from './routes/_authenticated/history'
@@ -36,6 +37,11 @@ const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAiAgentRoute = AuthenticatedAiAgentRouteImport.update({
+  id: '/ai-agent',
+  path: '/ai-agent',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAlertsRoute = AuthenticatedAlertsRouteImport.update({
   id: '/alerts',
@@ -92,6 +98,7 @@ const AuthenticatedSimulationRoute = AuthenticatedSimulationRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/ai-agent': typeof AuthenticatedAiAgentRoute
   '/alerts': typeof AuthenticatedAlertsRoute
   '/cost': typeof AuthenticatedCostRoute
   '/history': typeof AuthenticatedHistoryRoute
@@ -106,6 +113,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/ai-agent': typeof AuthenticatedAiAgentRoute
   '/alerts': typeof AuthenticatedAlertsRoute
   '/cost': typeof AuthenticatedCostRoute
   '/history': typeof AuthenticatedHistoryRoute
@@ -122,6 +130,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/ai-agent': typeof AuthenticatedAiAgentRoute
   '/_authenticated/alerts': typeof AuthenticatedAlertsRoute
   '/_authenticated/cost': typeof AuthenticatedCostRoute
   '/_authenticated/history': typeof AuthenticatedHistoryRoute
@@ -138,6 +147,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/ai-agent'
     | '/alerts'
     | '/cost'
     | '/history'
@@ -152,6 +162,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/ai-agent'
     | '/alerts'
     | '/cost'
     | '/history'
@@ -167,6 +178,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/ai-agent'
     | '/_authenticated/alerts'
     | '/_authenticated/cost'
     | '/_authenticated/history'
@@ -207,6 +219,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/ai-agent': {
+      id: '/_authenticated/ai-agent'
+      path: '/ai-agent'
+      fullPath: '/ai-agent'
+      preLoaderRoute: typeof AuthenticatedAiAgentRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/alerts': {
       id: '/_authenticated/alerts'
@@ -282,6 +301,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAiAgentRoute: typeof AuthenticatedAiAgentRoute
   AuthenticatedAlertsRoute: typeof AuthenticatedAlertsRoute
   AuthenticatedCostRoute: typeof AuthenticatedCostRoute
   AuthenticatedHistoryRoute: typeof AuthenticatedHistoryRoute
@@ -295,6 +315,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAiAgentRoute: AuthenticatedAiAgentRoute,
   AuthenticatedAlertsRoute: AuthenticatedAlertsRoute,
   AuthenticatedCostRoute: AuthenticatedCostRoute,
   AuthenticatedHistoryRoute: AuthenticatedHistoryRoute,
