@@ -243,6 +243,7 @@ export function AiCore({ reducedMotion }: AiCoreProps) {
       gl={{ antialias: !mobile, alpha: true, powerPreference: "high-performance" }}
       frameloop={reducedMotion ? "demand" : "always"}
     >
+      <color attach="background" args={["#090d14"]} />
       <ambientLight intensity={0.35} color={PALE_GOLD} />
       <CoreAssembly mobile={mobile} reducedMotion={reducedMotion} />
       <Environment resolution={64}>
