@@ -16,6 +16,8 @@ export type Database = {
     Tables: {
       agent_state: {
         Row: {
+          autonomous: boolean
+          cost_tick: number
           id: string
           last_error: string | null
           last_tick_at: string | null
@@ -25,6 +27,8 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          autonomous?: boolean
+          cost_tick?: number
           id?: string
           last_error?: string | null
           last_tick_at?: string | null
@@ -34,6 +38,8 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          autonomous?: boolean
+          cost_tick?: number
           id?: string
           last_error?: string | null
           last_tick_at?: string | null
