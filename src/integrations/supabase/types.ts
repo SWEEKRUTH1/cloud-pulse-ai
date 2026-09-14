@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      agent_state: {
+        Row: {
+          id: string
+          last_error: string | null
+          last_tick_at: string | null
+          locked_at: string | null
+          running: boolean
+          tick_count: number
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          last_error?: string | null
+          last_tick_at?: string | null
+          locked_at?: string | null
+          running?: boolean
+          tick_count?: number
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          last_error?: string | null
+          last_tick_at?: string | null
+          locked_at?: string | null
+          running?: boolean
+          tick_count?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       alerts: {
         Row: {
           acknowledged_at: string | null
@@ -515,9 +545,66 @@ export type Database = {
           },
         ]
       }
+      scaling_decisions: {
+        Row: {
+          action: string
+          blocked_by_cooldown: boolean
+          created_at: string
+          executed: boolean
+          execution_key: string | null
+          id: string
+          new_instances: number
+          previous_instances: number
+          reason: string | null
+          requested_by: string | null
+          resource_id: string
+          risk_level: string | null
+          trigger: string
+        }
+        Insert: {
+          action: string
+          blocked_by_cooldown?: boolean
+          created_at?: string
+          executed?: boolean
+          execution_key?: string | null
+          id?: string
+          new_instances: number
+          previous_instances: number
+          reason?: string | null
+          requested_by?: string | null
+          resource_id: string
+          risk_level?: string | null
+          trigger?: string
+        }
+        Update: {
+          action?: string
+          blocked_by_cooldown?: boolean
+          created_at?: string
+          executed?: boolean
+          execution_key?: string | null
+          id?: string
+          new_instances?: number
+          previous_instances?: number
+          reason?: string | null
+          requested_by?: string | null
+          resource_id?: string
+          risk_level?: string | null
+          trigger?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scaling_decisions_resource_id_fkey"
+            columns: ["resource_id"]
+            isOneToOne: false
+            referencedRelation: "resources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       scaling_events: {
         Row: {
           action: string
+          execution_key: string | null
           id: string
           new_instances: number
           previous_instances: number
@@ -529,6 +616,7 @@ export type Database = {
         }
         Insert: {
           action: string
+          execution_key?: string | null
           id?: string
           new_instances: number
           previous_instances: number
@@ -540,6 +628,7 @@ export type Database = {
         }
         Update: {
           action?: string
+          execution_key?: string | null
           id?: string
           new_instances?: number
           previous_instances?: number
@@ -601,6 +690,41 @@ export type Database = {
             foreignKeyName: "scaling_policies_resource_id_fkey"
             columns: ["resource_id"]
             isOneToOne: true
+            referencedRelation: "resources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      simulation_state: {
+        Row: {
+          id: string
+          scenario: string
+          started_tick: number
+          target_resource_id: string | null
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          id?: string
+          scenario?: string
+          started_tick?: number
+          target_resource_id?: string | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          id?: string
+          scenario?: string
+          started_tick?: number
+          target_resource_id?: string | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "simulation_state_target_resource_id_fkey"
+            columns: ["target_resource_id"]
+            isOneToOne: false
             referencedRelation: "resources"
             referencedColumns: ["id"]
           },
