@@ -128,7 +128,7 @@ function ParticleField({ mobile, reducedMotion }: { mobile: boolean; reducedMoti
   const far = useRef<THREE.Points>(null);
   const disc = useRef<THREE.Points>(null);
   const nearPoints = useSpherePoints(mobile ? 460 : 1100, 2.8, 5.4, 90210);
-  const farPoints = useSpherePoints(mobile ? 280 : 760, 5.2, 9.2, 31803);
+  const farPoints = useSpherePoints(mobile ? 280 : 760, 5.2, 7.0, 31803);
   const discPoints = useDiscPoints(mobile ? 220 : 620, 2.6, 6.2, 55117);
 
   useFrame(({ clock }, rawDelta) => {
@@ -357,7 +357,7 @@ function CoreAssembly({ mobile, reducedMotion }: { mobile: boolean; reducedMotio
           side={THREE.DoubleSide}
         />
       </mesh>
-      <mesh scale={2.35}>
+      <mesh scale={2.05}>
         <sphereGeometry args={[1, 32, 22]} />
         <meshBasicMaterial
           ref={haloMaterial}
