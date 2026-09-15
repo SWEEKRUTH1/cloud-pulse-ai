@@ -296,7 +296,7 @@ function CoreAssembly({ mobile, reducedMotion }: { mobile: boolean; reducedMotio
       const flicker = reducedMotion ? 0 : Math.sin(clock.elapsedTime * 2.3) * 0.012;
       haloMaterial.current.opacity = THREE.MathUtils.damp(
         haloMaterial.current.opacity,
-        (hovered ? 0.13 : 0.085) + flicker,
+        (hovered ? 0.075 : 0.045) + flicker,
         3,
         delta,
       );
@@ -425,8 +425,7 @@ export function AiCore({ reducedMotion }: AiCoreProps) {
       gl={{ antialias: !mobile, alpha: true, powerPreference: "high-performance" }}
       frameloop={reducedMotion ? "demand" : "always"}
     >
-      <color attach="background" args={["#070a10"]} />
-      <fog attach="fog" args={["#070a10", 9, 20]} />
+      {/* No background colour: the canvas stays transparent so the page gradient shows through. */}
       <ambientLight intensity={0.3} color={PALE_GOLD} />
       <CoreAssembly mobile={mobile} reducedMotion={reducedMotion} />
       <Environment resolution={64}>
@@ -434,8 +433,7 @@ export function AiCore({ reducedMotion }: AiCoreProps) {
         <Lightformer intensity={1.2} color={AMBER} position={[-4, -1, 2]} rotation-y={Math.PI / 2} scale={[6, 2, 1]} />
       </Environment>
       <EffectComposer multisampling={mobile ? 0 : 4}>
-        <Bloom intensity={mobile ? 1.05 : 1.5} luminanceThreshold={0.16} luminanceSmoothing={0.45} mipmapBlur />
-        <Vignette eskil={false} offset={0.28} darkness={0.72} />
+        <Bloom intensity={mobile ? 0.95 : 1.3} luminanceThreshold={0.18} luminanceSmoothing={0.45} mipmapBlur />
       </EffectComposer>
     </Canvas>
   );
