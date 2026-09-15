@@ -357,13 +357,13 @@ function CoreAssembly({ mobile, reducedMotion }: { mobile: boolean; reducedMotio
           side={THREE.DoubleSide}
         />
       </mesh>
-      <mesh scale={2.55}>
+      <mesh scale={2.35}>
         <sphereGeometry args={[1, 32, 22]} />
         <meshBasicMaterial
           ref={haloMaterial}
           color={AMBER}
           transparent
-          opacity={0.085}
+          opacity={0.05}
           depthWrite={false}
           side={THREE.BackSide}
           blending={THREE.AdditiveBlending}
