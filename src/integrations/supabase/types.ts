@@ -763,6 +763,7 @@ export type Database = {
     }
     Functions: {
       can_write: { Args: never; Returns: boolean }
+      current_org_id: { Args: never; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -770,6 +771,8 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_admin: { Args: never; Returns: boolean }
+      resource_in_my_org: { Args: { _resource_id: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "operator" | "viewer"
