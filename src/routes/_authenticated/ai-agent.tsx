@@ -36,7 +36,10 @@ function AiAgentPage() {
       </header>
 
       <div className="relative mx-auto flex min-h-[calc(100dvh-65px)] w-full max-w-6xl flex-col items-center justify-center px-4 pb-8 pt-12 sm:px-8 sm:pb-10 sm:pt-14">
-        <div className="relative h-[min(63vh,650px)] min-h-[390px] w-full" aria-label="Interactive three-dimensional AI intelligence core">
+        <div
+          className="relative h-[min(63vh,650px)] min-h-[390px] w-full [mask-image:radial-gradient(ellipse_at_center,black_38%,transparent_78%)]"
+          aria-label="Interactive three-dimensional AI intelligence core"
+        >
           {!ready ? <CoreFallback muted /> : null}
           {ready && supported ? (
             <Suspense fallback={<CoreFallback muted />}>
