@@ -43,7 +43,7 @@ function AuthPage() {
   const [password, setPassword] = useState("");
 
   useEffect(() => {
-    if (!loading && session) void router.navigate({ to: "/overview" });
+    if (!loading && session) void router.navigate({ to: "/ai-agent" });
   }, [loading, session, router]);
 
   const submit = async (mode: "in" | "up") => {

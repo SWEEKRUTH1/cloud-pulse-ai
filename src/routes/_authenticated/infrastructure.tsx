@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Cpu, Server } from "lucide-react";
+import { toast } from "sonner";
 
 import { Sparkline, chartColors } from "@/components/charts";
 import { EmptyState, Meter, Panel, PageHeader, RiskBadge, StatCard, StatusBadge } from "@/components/kit";
@@ -66,7 +67,11 @@ function InfrastructurePage() {
                   <Switch
                     checked={r.resource.enabled}
                     disabled={!canWrite}
-                    onCheckedChange={(v) => void toggleResource(r.resource.id, v)}
+                    onCheckedChange={(v) =>
+                      void toggleResource(r.resource.id, v).catch((error: unknown) => {
+                        toast.error(error instanceof Error ? error.message : "Resource update failed");
+                      })
+                    }
                     aria-label="Monitoring enabled"
                   />
                 </div>

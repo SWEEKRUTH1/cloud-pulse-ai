@@ -64,9 +64,14 @@ function ScalingPage() {
 
   const manualScale = async (id: string, target: number, label: string) => {
     setBusy(id);
-    await applyScaling(id, target, `Manual ${label} by ${role}.`, "Manual");
-    setBusy(null);
-    toast.success(`${nameFor(id)} scaled to ${target} instances`);
+    try {
+      await applyScaling(id, target, `Manual ${label} by ${role}.`, "Manual");
+      toast.success(`${nameFor(id)} scaled to ${target} instances`);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Scaling operation failed");
+    } finally {
+      setBusy(null);
+    }
   };
 
   const pending = resources.filter((r) => r.decision.action !== "hold");

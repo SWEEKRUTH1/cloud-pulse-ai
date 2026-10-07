@@ -34,7 +34,7 @@ const sevTone = { critical: "critical", warning: "warning", info: "info" } as co
 
 function AlertsPage() {
   const { resources, tickCount } = useLive();
-  const { canWrite, user } = useAuth();
+  const { canWrite, user, profile } = useAuth();
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [busy, setBusy] = useState<string | null>(null);
 
@@ -53,15 +53,16 @@ function AlertsPage() {
 
   // Raise alerts for live anomalies that have no matching active alert yet.
   useEffect(() => {
-    if (!canWrite) return;
+    if (!canWrite || !profile?.organization_id) return;
     const anomalies = resources.flatMap((r) => r.anomalies);
     const pending = anomalies.filter(
       (a) => !alerts.some((al) => al.status !== "resolved" && al.title === a.title),
     );
     if (pending.length === 0) return;
     void (async () => {
-      await supabase.from("alerts").insert(
+      const { error } = await supabase.from("alerts").insert(
         pending.slice(0, 4).map((a) => ({
+          organization_id: profile.organization_id,
           resource_id: a.resource_id,
           alert_type: "anomaly",
           severity: a.severity,
@@ -69,31 +70,47 @@ function AlertsPage() {
           description: `${a.description} Recommended action: ${a.recommended_action}`,
         })),
       );
+      if (error) {
+        toast.error(`Could not create anomaly alert: ${error.message}`);
+        return;
+      }
       await load();
     })();
-  }, [tickCount, resources, alerts, canWrite, load]);
+  }, [tickCount, resources, alerts, canWrite, load, profile?.organization_id]);
 
   const nameFor = (id: string | null) =>
     resources.find((r) => r.resource.id === id)?.resource.name ?? "Environment";
 
   const act = async (alert: Alert, mode: "ack" | "resolve") => {
+    if (!user || !profile?.organization_id) {
+      toast.error("Your organization profile is not ready");
+      return;
+    }
     setBusy(alert.id);
     const patch =
       mode === "ack"
         ? { status: "acknowledged", acknowledged_by: user?.id ?? null, acknowledged_at: new Date().toISOString() }
         : { status: "resolved", resolved_by: user?.id ?? null, resolved_at: new Date().toISOString() };
-    await supabase.from("alerts").update(patch).eq("id", alert.id);
-    await supabase.from("audit_logs").insert({
-      user_id: user?.id ?? null,
-      user_email: user?.email ?? null,
+    try {
+      const { error: alertError } = await supabase.from("alerts").update(patch).eq("id", alert.id);
+      if (alertError) throw alertError;
+      const { error: auditError } = await supabase.from("audit_logs").insert({
+      organization_id: profile.organization_id,
+      user_id: user.id,
+      user_email: user.email ?? null,
       action: mode === "ack" ? "alert.acknowledge" : "alert.resolve",
       resource_type: "alert",
       resource_id: alert.id,
       details: alert.title,
-    });
-    await load();
-    setBusy(null);
-    toast.success(mode === "ack" ? "Alert acknowledged" : "Alert resolved");
+      });
+      if (auditError) throw auditError;
+      await load();
+      toast.success(mode === "ack" ? "Alert acknowledged" : "Alert resolved");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Alert update failed");
+    } finally {
+      setBusy(null);
+    }
   };
 
   const active = alerts.filter((a) => a.status === "active");

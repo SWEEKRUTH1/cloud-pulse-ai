@@ -15,6 +15,7 @@ import {
   Server,
   Settings,
   Sparkles,
+  Workflow,
   Zap,
 } from "lucide-react";
 import type { ReactNode } from "react";
@@ -35,6 +36,7 @@ import { cn } from "@/lib/utils";
 
 const nav = [
   { to: "/ai-agent", label: "AI Agent", icon: Bot },
+  { to: "/workflow", label: "Workflow", icon: Workflow },
   { to: "/overview", label: "Overview", icon: LayoutDashboard },
   { to: "/infrastructure", label: "Infrastructure", icon: Server },
   { to: "/metrics", label: "Live Metrics", icon: Activity },

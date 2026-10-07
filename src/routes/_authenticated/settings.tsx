@@ -42,7 +42,10 @@ function SettingsPage() {
   useEffect(() => setName(profile?.name ?? ""), [profile?.name]);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user || !profile?.organization_id) {
+      toast.error("Your organization profile is not ready");
+      return;
+    }
     void (async () => {
       const { data } = await supabase
         .from("notifications")
@@ -56,17 +59,25 @@ function SettingsPage() {
   const saveProfile = async () => {
     if (!user) return;
     setSaving(true);
-    await supabase.from("profiles").update({ name }).eq("user_id", user.id);
-    await supabase.from("audit_logs").insert({
-      user_id: user.id,
-      user_email: user.email ?? null,
-      action: "profile.update",
-      resource_type: "profile",
-      details: `Display name set to ${name}`,
-    });
-    await refresh();
-    setSaving(false);
-    toast.success("Profile updated");
+    try {
+      const { error: profileError } = await supabase.from("profiles").update({ name }).eq("user_id", user.id);
+      if (profileError) throw profileError;
+      const { error: auditError } = await supabase.from("audit_logs").insert({
+        organization_id: profile.organization_id,
+        user_id: user.id,
+        user_email: user.email ?? null,
+        action: "profile.update",
+        resource_type: "profile",
+        details: `Display name set to ${name}`,
+      });
+      if (auditError) throw auditError;
+      await refresh();
+      toast.success("Profile updated");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Profile update failed");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (

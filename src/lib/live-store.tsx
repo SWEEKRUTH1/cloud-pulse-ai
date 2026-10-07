@@ -13,6 +13,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { detectAnomalies, statusFromMetrics } from "@/lib/anomaly-detection";
 import { predictWorkload } from "@/lib/prediction-engine";
 import { decideScaling } from "@/lib/scaling-engine";
+import {
+  applyScaling as applyScalingServer,
+  setResourceEnabled,
+  updateScalingPolicy,
+} from "@/lib/cloudops-functions";
 import type {
   Anomaly,
   Environment,
@@ -51,7 +56,7 @@ interface LiveState {
   scenario: Scenario;
   runScenario: (s: Scenario, resourceId?: string) => void;
   tickCount: number;
-  applyScaling: (resourceId: string, instances: number, reason: string, trigger: string) => Promise<void>;
+  applyScaling: (resourceId: string, instances: number, reason: string, trigger: "AI" | "Manual") => Promise<void>;
   toggleResource: (resourceId: string, enabled: boolean) => Promise<void>;
   updatePolicy: (resourceId: string, patch: Partial<ScalingPolicy>) => Promise<void>;
   reload: () => Promise<void>;
@@ -250,6 +255,8 @@ export function LiveProvider({ children }: { children: ReactNode }) {
       ]);
       if (envRes.error) throw envRes.error;
       if (resRes.error) throw resRes.error;
+      if (polRes.error) throw polRes.error;
+      if (evtRes.error) throw evtRes.error;
 
       const envs = (envRes.data ?? []) as Environment[];
       const rows = (resRes.data ?? []) as Resource[];
@@ -264,11 +271,12 @@ export function LiveProvider({ children }: { children: ReactNode }) {
       }
       lastEvent.current = seen;
 
-      const { data: metrics } = await supabase
+      const { data: metrics, error: metricsError } = await supabase
         .from("metrics")
         .select("*")
         .order("timestamp", { ascending: false })
         .limit(1000);
+      if (metricsError) throw metricsError;
 
       const map: Record<string, MetricPoint[]> = {};
       for (const row of (metrics ?? []) as MetricPoint[]) {
@@ -322,22 +330,19 @@ export function LiveProvider({ children }: { children: ReactNode }) {
     async (resourceId: string, instances: number, reason: string, trigger: string) => {
       const resource = resources.find((r) => r.id === resourceId);
       if (!resource || instances === resource.instance_count) return;
-      const previous = resource.instance_count;
-      const action = instances > previous ? "scale_up" : "scale_down";
-      setResources((prev) =>
-        prev.map((r) => (r.id === resourceId ? { ...r, instance_count: instances } : r)),
-      );
-      lastEvent.current[resourceId] = { at: new Date().toISOString(), action };
-      await supabase.from("resources").update({ instance_count: instances }).eq("id", resourceId);
-      await supabase.from("scaling_events").insert({
-        resource_id: resourceId,
-        action,
-        previous_instances: previous,
-        new_instances: instances,
-        reason,
-        trigger,
-        status: "completed",
-      });
+      try {
+        const operation = await applyScalingServer({
+          data: { resourceId, instances, reason, trigger },
+        });
+        setResources((prev) =>
+          prev.map((r) => (r.id === resourceId ? { ...r, instance_count: instances } : r)),
+        );
+        lastEvent.current[resourceId] = { at: new Date().toISOString(), action: operation.action };
+      } catch (e) {
+        const message = e instanceof Error ? e.message : "Scaling operation failed";
+        setError(message);
+        throw e;
+      }
     },
     [resources],
   );
@@ -399,35 +404,48 @@ export function LiveProvider({ children }: { children: ReactNode }) {
       tickCount,
       applyScaling,
       toggleResource: async (resourceId, enabled) => {
-        setResources((prev) => prev.map((r) => (r.id === resourceId ? { ...r, enabled } : r)));
-        await supabase.from("resources").update({ enabled }).eq("id", resourceId);
+        try {
+          await setResourceEnabled({ data: { resourceId, enabled } });
+          setResources((prev) => prev.map((r) => (r.id === resourceId ? { ...r, enabled } : r)));
+        } catch (e) {
+          setError(e instanceof Error ? e.message : "Resource update failed");
+          throw e;
+        }
       },
       updatePolicy: async (resourceId, patch) => {
-        setPolicies((prev) =>
-          prev.map((p) => (p.resource_id === resourceId ? { ...p, ...patch } : p)),
-        );
-        setResources((prev) =>
-          prev.map((r) =>
-            r.id === resourceId
-              ? {
-                  ...r,
-                  min_instances: patch.min_instances ?? r.min_instances,
-                  max_instances: patch.max_instances ?? r.max_instances,
-                  target_cpu: patch.target_cpu ?? r.target_cpu,
-                  target_memory: patch.target_memory ?? r.target_memory,
-                }
-              : r,
-          ),
-        );
-        await supabase.from("scaling_policies").update(patch).eq("resource_id", resourceId);
-        const resourcePatch = {
-          ...(patch.min_instances != null ? { min_instances: patch.min_instances } : {}),
-          ...(patch.max_instances != null ? { max_instances: patch.max_instances } : {}),
-          ...(patch.target_cpu != null ? { target_cpu: patch.target_cpu } : {}),
-          ...(patch.target_memory != null ? { target_memory: patch.target_memory } : {}),
-        };
-        if (Object.keys(resourcePatch).length > 0)
-          await supabase.from("resources").update(resourcePatch).eq("id", resourceId);
+        try {
+          const updated = await updateScalingPolicy({
+            data: {
+              resourceId,
+              minInstances: patch.min_instances ?? null,
+              maxInstances: patch.max_instances ?? null,
+              targetCpu: patch.target_cpu ?? null,
+              targetMemory: patch.target_memory ?? null,
+              scaleUpCooldown: patch.scale_up_cooldown ?? null,
+              scaleDownCooldown: patch.scale_down_cooldown ?? null,
+              enabled: patch.enabled ?? null,
+            },
+          });
+          setPolicies((prev) =>
+            prev.map((p) => (p.resource_id === resourceId ? updated : p)),
+          );
+          setResources((prev) =>
+            prev.map((r) =>
+              r.id === resourceId
+                ? {
+                    ...r,
+                    min_instances: updated.min_instances,
+                    max_instances: updated.max_instances,
+                    target_cpu: updated.target_cpu,
+                    target_memory: updated.target_memory,
+                  }
+                : r,
+            ),
+          );
+        } catch (e) {
+          setError(e instanceof Error ? e.message : "Policy update failed");
+          throw e;
+        }
       },
       reload: load,
     }),
