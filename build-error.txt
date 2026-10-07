@@ -1,0 +1,49 @@
+
+> build
+> vite build
+
+[33mThe plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the [1mresolve.tsconfigPaths[22m option. You can remove the plugin and set [1mresolve.tsconfigPaths: true[22m in your Vite config instead.[39m
+[36mvite v8.2.2 [32mbuilding client environment for production...[36m[39m
+transforming...
+✓ 2644 modules transformed.
+rendering chunks...
+[31m✗[39m Build failed in 8.14s
+[31merror during build:
+[31mBuild failed with 1 error:
+
+[plugin tanstack-start-core:import-protection]
+RolldownError: 
+[import-protection] Import denied in client environment
+
+  Denied by file pattern: **/server/**
+  Importer: src/lib/live-store.tsx
+  Import: "C:\Users\ADMIN\Desktop\cloude ops\cloud-pulse-ai/src/lib/server/cloudops"
+  Resolved: src/lib/server/cloudops.ts
+
+  Trace:
+    1. src/router.tsx:3:27 (entry) (import "./routeTree.gen")
+    2. src/routeTree.gen.ts:15:58 (import "./routes/_authenticated/metrics")
+    3. src/routes/_authenticated/metrics.tsx (import "C:\Users\ADMIN\Desktop\cloude ops\cloud-pulse-ai/src/lib/live-store")
+    4. src/lib/live-store.tsx (import "C:\Users\ADMIN\Desktop\cloude ops\cloud-pulse-ai/src/lib/server/cloudops")
+
+  Suggestions:
+    - Use createServerFn().handler(() => ...) to keep the logic on the server and call it from the client via an RPC bridge
+    - Use createServerOnlyFn(() => ...) to mark it as server-only (it will throw if accidentally called from the client)
+    - Use createIsomorphicFn().client(() => ...).server(() => ...) to provide separate client and server implementations
+    - Move the server-only import out of this file into a separate .server.ts module that is not imported by any client code
+    at error (file:///C:/Users/ADMIN/Desktop/cloude%20ops/cloud-pulse-ai/node_modules/rolldown/dist/shared/logs-DmYCAKcW.mjs:159:24)
+    at PluginContextImpl.error (file:///C:/Users/ADMIN/Desktop/cloude%20ops/cloud-pulse-ai/node_modules/rolldown/dist/shared/bindingify-input-options-COG1sboO.mjs:111:10)
+    at PluginContextImpl.generateBundle (file:///C:/Users/ADMIN/Desktop/cloude%20ops/cloud-pulse-ai/node_modules/@tanstack/start-plugin-core/dist/esm/vite/import-protection-plugin/plugin.js:1028:51)
+    at async plugin (file:///C:/Users/ADMIN/Desktop/cloude%20ops/cloud-pulse-ai/node_modules/rolldown/dist/shared/bindingify-input-options-COG1sboO.mjs:1708:3)
+    at async plugin.<computed> (file:///C:/Users/ADMIN/Desktop/cloude%20ops/cloud-pulse-ai/node_modules/rolldown/dist/shared/bindingify-input-options-COG1sboO.mjs:2125:12)[31m
+    at aggregateBindingErrorsIntoJsError (file:///C:/Users/ADMIN/Desktop/cloude%20ops/cloud-pulse-ai/node_modules/rolldown/dist/shared/error-NcRuXAVN.mjs:48:18)
+    at unwrapBindingResult (file:///C:/Users/ADMIN/Desktop/cloude%20ops/cloud-pulse-ai/node_modules/rolldown/dist/shared/error-NcRuXAVN.mjs:18:128)
+    at #build (file:///C:/Users/ADMIN/Desktop/cloude%20ops/cloud-pulse-ai/node_modules/rolldown/dist/shared/rolldown-vcii7mEa.mjs:132:34)
+    at async buildEnvironment (file:///C:/Users/ADMIN/Desktop/cloude%20ops/cloud-pulse-ai/node_modules/vite/dist/node/chunks/node.js:33821:66)
+    at async Object.build (file:///C:/Users/ADMIN/Desktop/cloude%20ops/cloud-pulse-ai/node_modules/vite/dist/node/chunks/node.js:34242:19)
+    at async buildStartViteEnvironments (file:///C:/Users/ADMIN/Desktop/cloude%20ops/cloud-pulse-ai/node_modules/@tanstack/start-plugin-core/dist/esm/vite/planning.js:95:23)
+    at async Object.buildApp (file:///C:/Users/ADMIN/Desktop/cloude%20ops/cloud-pulse-ai/node_modules/@tanstack/start-plugin-core/dist/esm/vite/plugin.js:113:8)
+    at async Object.buildApp (file:///C:/Users/ADMIN/Desktop/cloude%20ops/cloud-pulse-ai/node_modules/vite/dist/node/chunks/node.js:34234:6)
+    at async CAC.<anonymous> (file:///C:/Users/ADMIN/Desktop/cloude%20ops/cloud-pulse-ai/node_modules/vite/dist/node/cli.js:776:3) {
+  errors: [Getter/Setter]
+}[39m
