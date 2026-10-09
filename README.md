@@ -2222,6 +2222,22 @@ Prefer working locally? You need Node.js and npm — [install with nvm](https://
 ```sh
 git clone <this-repository-url>
 cd <repository-name>
-npm i
+npm ci
 npm run dev
 ```
+
+## Deploy to Vercel
+
+This project uses TanStack Start with Nitro's Vercel preset (`nitro.preset: "vercel"` in `vite.config.ts`). Connect this GitHub repository to a Vercel project and use the repository root as the Root Directory. Vercel can use the default install command and `npm run build`; the build creates the Vercel output in `.vercel/output`. No separate `vercel.json` is required. Pushes to the connected production branch (usually `main`) trigger deployments.
+
+Add these variables in **Vercel → Project Settings → Environment Variables** for every environment where the app should run:
+
+| Variable | Value / use |
+| --- | --- |
+| `VITE_SUPABASE_URL` | Supabase project URL; exposed to the browser |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | Supabase publishable/anon key; exposed to the browser |
+| `SUPABASE_URL` | Same Supabase project URL; used by server code |
+| `SUPABASE_PUBLISHABLE_KEY` | Same publishable/anon key; used by server authentication |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service-role secret; required for server-side agent/admin database operations |
+
+Never add the service-role key to a `VITE_` variable or commit it to GitHub. Set it only as a server-side Vercel environment variable. After adding or changing variables, redeploy so the new values are applied. Ensure the Supabase project schema and required migrations are applied before using database-backed features.

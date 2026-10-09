@@ -17,7 +17,7 @@ import {
   applyScaling as applyScalingServer,
   setResourceEnabled,
   updateScalingPolicy,
-} from "@/lib/cloudops-functions";
+} from "@/lib/cloudops.functions";
 import type {
   Anomaly,
   Environment,
