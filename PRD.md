@@ -334,7 +334,7 @@ These are future scope, not current claims: wire a scheduler to `runAgentCycle`;
 
 ## 29. Deployment
 
-The project is configured as a Vite/TanStack Start application with a custom `src/server.ts` entry and Nitro build configuration supplied by `@lovable.dev/vite-tanstack-config`; that configuration defaults to a Cloudflare target. Runtime requires Supabase URL and publishable key for the browser and Supabase URL plus service-role key for server-only agent operations. No deployment manifest or verified production scheduler is present in the inspected project.
+The project is configured as a Vite/TanStack Start application with a custom `src/server.ts` entry and Nitro's Vercel preset in `vite.config.ts`. The production build generates Vercel output in `.vercel/output`; no separate `vercel.json` is required. `package-lock.json` is the deployment lockfile. Runtime requires Supabase URL and publishable key for the browser, the server-side publishable key for authentication, and the service-role key for server-only agent/admin operations. The service-role key must remain server-only. No verified production scheduler is present in the inspected project.
 
 ## 30. Current Project Status
 

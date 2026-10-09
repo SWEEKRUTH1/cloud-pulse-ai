@@ -2230,14 +2230,14 @@ npm run dev
 
 This project uses TanStack Start with Nitro's Vercel preset (`nitro.preset: "vercel"` in `vite.config.ts`). Connect this GitHub repository to a Vercel project and use the repository root as the Root Directory. Vercel can use the default install command and `npm run build`; the build creates the Vercel output in `.vercel/output`. No separate `vercel.json` is required. Pushes to the connected production branch (usually `main`) trigger deployments.
 
-Add these variables in **Vercel → Project Settings → Environment Variables** for every environment where the app should run:
+Add these variables in **Vercel → Project Settings → Environment Variables** and select **Production, Preview, and Development** for each environment in which you use the app. Keep the same Supabase project values across environments only if you intentionally want previews and local development to use production data; otherwise use a separate Supabase project for Preview and Development.
 
-| Variable | Value / use |
-| --- | --- |
-| `VITE_SUPABASE_URL` | Supabase project URL; exposed to the browser |
-| `VITE_SUPABASE_PUBLISHABLE_KEY` | Supabase publishable/anon key; exposed to the browser |
-| `SUPABASE_URL` | Same Supabase project URL; used by server code |
-| `SUPABASE_PUBLISHABLE_KEY` | Same publishable/anon key; used by server authentication |
-| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service-role secret; required for server-side agent/admin database operations |
+| Variable | Production | Preview | Development | Value / use |
+| --- | --- | --- | --- | --- |
+| `VITE_SUPABASE_URL` | Required | Required | Required | Supabase project URL; exposed to the browser |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | Required | Required | Required | Supabase publishable/anon key; exposed to the browser |
+| `SUPABASE_URL` | Required | Required | Required | Same Supabase project URL; used by server code |
+| `SUPABASE_PUBLISHABLE_KEY` | Required | Required | Required | Same publishable/anon key; used by server authentication |
+| `SUPABASE_SERVICE_ROLE_KEY` | Required for server-side agent/admin operations | Required for those operations | Required for those operations | Supabase service-role secret; server-side only |
 
-Never add the service-role key to a `VITE_` variable or commit it to GitHub. Set it only as a server-side Vercel environment variable. After adding or changing variables, redeploy so the new values are applied. Ensure the Supabase project schema and required migrations are applied before using database-backed features.
+For local development, put the corresponding values in an ignored `.env.local` file or use `vercel env pull`; do not commit local environment files. Never add the service-role key to a `VITE_` variable or expose it to client code. Set it only as a server-side Vercel environment variable. After adding or changing Vercel variables, redeploy so the new values are applied. Ensure the Supabase project schema and required migrations are applied before using database-backed features.

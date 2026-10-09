@@ -58,6 +58,7 @@ export type Database = {
           created_at: string
           description: string | null
           id: string
+          organization_id: string | null
           resolved_at: string | null
           resolved_by: string | null
           resource_id: string | null
@@ -72,6 +73,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          organization_id?: string | null
           resolved_at?: string | null
           resolved_by?: string | null
           resource_id?: string | null
@@ -86,6 +88,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          organization_id?: string | null
           resolved_at?: string | null
           resolved_by?: string | null
           resource_id?: string | null
@@ -101,6 +104,13 @@ export type Database = {
             referencedRelation: "resources"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "alerts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
         ]
       }
       audit_logs: {
@@ -109,6 +119,7 @@ export type Database = {
           created_at: string
           details: string | null
           id: string
+          organization_id: string | null
           resource_id: string | null
           resource_type: string | null
           status: string
@@ -120,6 +131,7 @@ export type Database = {
           created_at?: string
           details?: string | null
           id?: string
+          organization_id?: string | null
           resource_id?: string | null
           resource_type?: string | null
           status?: string
@@ -131,13 +143,22 @@ export type Database = {
           created_at?: string
           details?: string | null
           id?: string
+          organization_id?: string | null
           resource_id?: string | null
           resource_type?: string | null
           status?: string
           user_email?: string | null
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "audit_logs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       cloud_connections: {
         Row: {
@@ -762,6 +783,21 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      apply_scaling: {
+        Args: {
+          p_instances: number
+          p_reason: string
+          p_resource_id: string
+          p_trigger: string
+        }
+        Returns: {
+          action: string
+          event_id: string
+          new_instances: number
+          previous_instances: number
+          resource_id: string
+        }[]
+      }
       can_write: { Args: never; Returns: boolean }
       current_org_id: { Args: never; Returns: string }
       has_role: {
@@ -773,6 +809,23 @@ export type Database = {
       }
       is_admin: { Args: never; Returns: boolean }
       resource_in_my_org: { Args: { _resource_id: string }; Returns: boolean }
+      set_resource_enabled: {
+        Args: { p_enabled: boolean; p_resource_id: string }
+        Returns: Database["public"]["Tables"]["resources"]["Row"]
+      }
+      update_scaling_policy: {
+        Args: {
+          p_enabled?: boolean | null
+          p_max_instances?: number | null
+          p_min_instances?: number | null
+          p_resource_id: string
+          p_scale_down_cooldown?: number | null
+          p_scale_up_cooldown?: number | null
+          p_target_cpu?: number | null
+          p_target_memory?: number | null
+        }
+        Returns: Database["public"]["Tables"]["scaling_policies"]["Row"]
+      }
     }
     Enums: {
       app_role: "admin" | "operator" | "viewer"

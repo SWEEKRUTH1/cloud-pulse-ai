@@ -25,7 +25,8 @@ export const Route = createFileRoute("/_authenticated/settings")({
       { property: "og:title", content: "Settings & Notifications — CloudOps AI" },
       {
         property: "og:description",
-        content: "Profile, role permissions and notification preferences for the CloudOps AI console.",
+        content:
+          "Profile, role permissions and notification preferences for the CloudOps AI console.",
       },
     ],
   }),
@@ -54,13 +55,19 @@ function SettingsPage() {
         .limit(30);
       setNotifications((data ?? []) as NotificationRow[]);
     })();
-  }, [user]);
+  }, [user, profile?.organization_id]);
 
   const saveProfile = async () => {
-    if (!user) return;
+    if (!user || !profile?.organization_id) {
+      toast.error("Your organization profile is not ready");
+      return;
+    }
     setSaving(true);
     try {
-      const { error: profileError } = await supabase.from("profiles").update({ name }).eq("user_id", user.id);
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .update({ name })
+        .eq("user_id", user.id);
       if (profileError) throw profileError;
       const { error: auditError } = await supabase.from("audit_logs").insert({
         organization_id: profile.organization_id,
@@ -100,7 +107,10 @@ function SettingsPage() {
             </div>
             <div className="flex items-center justify-between rounded-lg border border-border bg-surface-2 px-3 py-2">
               <span className="text-sm text-muted-foreground">Role</span>
-              <StatusBadge status={isAdmin ? "healthy" : canWrite ? "info" : "offline"} label={role} />
+              <StatusBadge
+                status={isAdmin ? "healthy" : canWrite ? "info" : "offline"}
+                label={role}
+              />
             </div>
             <Button disabled={saving || !name.trim()} onClick={() => void saveProfile()}>
               Save profile
@@ -146,7 +156,9 @@ function SettingsPage() {
                 <p className="text-sm font-medium text-foreground">{env.name}</p>
                 <StatusBadge status={env.status === "healthy" ? "healthy" : "warning"} />
               </div>
-              <p className="mt-1 text-xs text-muted-foreground">{env.description ?? "No description"}</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {env.description ?? "No description"}
+              </p>
             </div>
           ))}
         </div>
@@ -154,20 +166,27 @@ function SettingsPage() {
 
       <Panel title="Notifications" description="Recent messages sent to your account">
         {notifications.length === 0 ? (
-          <EmptyState title="No notifications" description="Alerts you acknowledge or resolve will appear here." />
+          <EmptyState
+            title="No notifications"
+            description="Alerts you acknowledge or resolve will appear here."
+          />
         ) : (
           <ul className="divide-y divide-border">
             {notifications.map((n) => (
               <li key={n.id} className="flex items-start gap-3 py-3">
                 <StatusBadge
-                  status={n.type === "critical" ? "critical" : n.type === "warning" ? "warning" : "info"}
+                  status={
+                    n.type === "critical" ? "critical" : n.type === "warning" ? "warning" : "info"
+                  }
                   label={n.type}
                 />
                 <div className="min-w-0 flex-1">
                   <p className="text-sm text-foreground">{n.title}</p>
                   <p className="text-xs text-muted-foreground">{n.message}</p>
                 </div>
-                <span className="text-[11px] text-muted-foreground">{relativeTime(n.created_at)}</span>
+                <span className="text-[11px] text-muted-foreground">
+                  {relativeTime(n.created_at)}
+                </span>
               </li>
             ))}
           </ul>

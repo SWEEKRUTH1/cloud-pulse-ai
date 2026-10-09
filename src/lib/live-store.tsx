@@ -56,7 +56,12 @@ interface LiveState {
   scenario: Scenario;
   runScenario: (s: Scenario, resourceId?: string) => void;
   tickCount: number;
-  applyScaling: (resourceId: string, instances: number, reason: string, trigger: "AI" | "Manual") => Promise<void>;
+  applyScaling: (
+    resourceId: string,
+    instances: number,
+    reason: string,
+    trigger: "AI" | "Manual",
+  ) => Promise<void>;
   toggleResource: (resourceId: string, enabled: boolean) => Promise<void>;
   updatePolicy: (resourceId: string, patch: Partial<ScalingPolicy>) => Promise<void>;
   reload: () => Promise<void>;
@@ -72,9 +77,7 @@ const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v
 
 /** Deterministic-ish traffic wave so charts look like real diurnal load. */
 function wave(tick: number, offset: number) {
-  return (
-    Math.sin((tick + offset) / 22) * 0.5 + Math.sin((tick + offset) / 7) * 0.18 + 1
-  );
+  return Math.sin((tick + offset) / 22) * 0.5 + Math.sin((tick + offset) / 7) * 0.18 + 1;
 }
 
 function nextPoint(
@@ -95,9 +98,13 @@ function nextPoint(
   let cpu = prev.cpu * 0.7 + (requests / Math.max(1, resource.instance_count * 9)) * 0.3;
   let memory = prev.memory * 0.9 + rnd(-1.5, 1.8);
   let latency = prev.latency * 0.8 + (90 + cpu * 1.6) * 0.2 + rnd(-8, 8);
-  let errorRate = clamp(prev.error_rate * 0.85 + (cpu > 88 ? rnd(0.2, 1.1) : rnd(-0.1, 0.12)), 0, 22);
-  let disk = clamp(prev.disk + rnd(-0.15, 0.2), 12, 96);
-  let connections = clamp(prev.connections * 0.8 + requests / 22, 5, 5000);
+  let errorRate = clamp(
+    prev.error_rate * 0.85 + (cpu > 88 ? rnd(0.2, 1.1) : rnd(-0.1, 0.12)),
+    0,
+    22,
+  );
+  const disk = clamp(prev.disk + rnd(-0.15, 0.2), 12, 96);
+  const connections = clamp(prev.connections * 0.8 + requests / 22, 5, 5000);
 
   if (active) {
     if (scenario === "traffic_spike") {
@@ -319,7 +326,15 @@ export function LiveProvider({ children }: { children: ReactNode }) {
         const targeted = !scenarioTarget || scenarioTarget === r.id;
         const point = r.enabled
           ? nextPoint(last, r, tickCount, scenario, tickCount - scenarioStart, targeted)
-          : { ...last, timestamp: new Date().toISOString(), cpu: 0, memory: 0, requests: 0, latency: 0, error_rate: 0 };
+          : {
+              ...last,
+              timestamp: new Date().toISOString(),
+              cpu: 0,
+              memory: 0,
+              requests: 0,
+              latency: 0,
+              error_rate: 0,
+            };
         next[r.id] = [...series, point].slice(-MAX_POINTS);
       }
       return next;
@@ -327,7 +342,7 @@ export function LiveProvider({ children }: { children: ReactNode }) {
   }, [tickCount, resources, scenario, scenarioStart, scenarioTarget]);
 
   const applyScaling = useCallback(
-    async (resourceId: string, instances: number, reason: string, trigger: string) => {
+    async (resourceId: string, instances: number, reason: string, trigger: "AI" | "Manual") => {
       const resource = resources.find((r) => r.id === resourceId);
       if (!resource || instances === resource.instance_count) return;
       try {
@@ -352,7 +367,13 @@ export function LiveProvider({ children }: { children: ReactNode }) {
       resources.map((r) => {
         const series = seriesMap[r.id] ?? [seedPoint(r)];
         const ev = lastEvent.current[r.id];
-        return evaluate(r, series, policies.find((p) => p.resource_id === r.id) ?? null, ev?.at ?? null, ev?.action ?? null);
+        return evaluate(
+          r,
+          series,
+          policies.find((p) => p.resource_id === r.id) ?? null,
+          ev?.at ?? null,
+          ev?.action ?? null,
+        );
       }),
     [resources, seriesMap, policies],
   );
@@ -426,9 +447,7 @@ export function LiveProvider({ children }: { children: ReactNode }) {
               enabled: patch.enabled ?? null,
             },
           });
-          setPolicies((prev) =>
-            prev.map((p) => (p.resource_id === resourceId ? updated : p)),
-          );
+          setPolicies((prev) => prev.map((p) => (p.resource_id === resourceId ? updated : p)));
           setResources((prev) =>
             prev.map((r) =>
               r.id === resourceId
